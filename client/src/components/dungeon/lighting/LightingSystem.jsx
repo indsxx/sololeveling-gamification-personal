@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useWorld } from '../WorldManager'
 
 export default function LightingSystem() {
-  const { isLow, isMedium } = useWorld()
+  const { isLow } = useWorld()
   const crystalLight1Ref = useRef()
   const crystalLight2Ref = useRef()
 

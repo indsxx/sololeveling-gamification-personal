@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback } from 'react'
 
 const WorldContext = createContext(null)
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const QUALITY_LEVELS = {
   ULTRA: 'ultra',
   HIGH: 'high',
@@ -9,6 +10,7 @@ export const QUALITY_LEVELS = {
   LOW: 'low',
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWorld() {
   const context = useContext(WorldContext)
   if (!context) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'motion/react'
 
 function ConduitParticle({ delay, duration }) {
@@ -74,16 +74,13 @@ function Node({ status, isLast }) {
 }
 
 export default function EnergyConduit({ chapters }) {
-  const [particles, setParticles] = useState([])
-
-  useEffect(() => {
-    const newParticles = Array.from({ length: 4 }, (_, i) => ({
+  const [particles] = useState(() =>
+    Array.from({ length: 4 }, (_, i) => ({
       id: i,
       delay: i * 0.8,
       duration: 1.5 + Math.random() * 0.5,
     }))
-    setParticles(newParticles)
-  }, [])
+  )
 
   return (
     <div

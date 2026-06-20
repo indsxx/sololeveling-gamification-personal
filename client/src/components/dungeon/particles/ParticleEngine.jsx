@@ -16,6 +16,7 @@ export default function ParticleEngine() {
     const positions = new Float32Array(DUST_COUNT * 3)
     const velocities = new Float32Array(DUST_COUNT * 3)
 
+    /* eslint-disable react-hooks/purity */
     for (let i = 0; i < DUST_COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 20
       positions[i * 3 + 1] = Math.random() * 10
@@ -24,6 +25,7 @@ export default function ParticleEngine() {
       velocities[i * 3 + 1] = Math.random() * 0.001 + 0.0005
       velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.002
     }
+    /* eslint-enable react-hooks/purity */
 
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geo.userData = { velocities }
@@ -35,6 +37,7 @@ export default function ParticleEngine() {
     const positions = new Float32Array(EMBER_COUNT * 3)
     const velocities = new Float32Array(EMBER_COUNT * 3)
 
+    /* eslint-disable react-hooks/purity */
     for (let i = 0; i < EMBER_COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 15
       positions[i * 3 + 1] = Math.random() * 8
@@ -43,6 +46,7 @@ export default function ParticleEngine() {
       velocities[i * 3 + 1] = Math.random() * 0.002 + 0.001
       velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.003
     }
+    /* eslint-enable react-hooks/purity */
 
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geo.userData = { velocities }

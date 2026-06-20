@@ -9,11 +9,13 @@ export default function RockFormation({
   const geometry = useMemo(() => {
     const geo = new THREE.DodecahedronGeometry(0.5, 0)
     const positions = geo.attributes.position.array
+    /* eslint-disable react-hooks/purity */
     for (let i = 0; i < positions.length; i += 3) {
       positions[i] += (Math.random() - 0.5) * 0.1
       positions[i + 1] += (Math.random() - 0.5) * 0.1
       positions[i + 2] += (Math.random() - 0.5) * 0.1
     }
+    /* eslint-enable react-hooks/purity */
     geo.computeVertexNormals()
     return geo
   }, [])

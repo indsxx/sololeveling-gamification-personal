@@ -16,6 +16,7 @@ export default function CameraController({
   const { isLow } = useWorld()
   const timeRef = useRef(0)
 
+  /* eslint-disable react-hooks/immutability */
   useFrame((state, delta) => {
     if (isLow) {
       camera.position.y = 3 + Math.sin(state.clock.elapsedTime / breathPeriod) * breathAmplitude
@@ -40,6 +41,7 @@ export default function CameraController({
     camera.lookAt(0, 2, 0)
     camera.rotation.z = rollAngle
   })
+  /* eslint-enable react-hooks/immutability */
 
   return null
 }
