@@ -1,122 +1,127 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import { supabase } from './lib/supabase'
+import useGameStore from './store/useGameStore'
+import AuthGuard from './components/AuthGuard'
 
-function App() {
-  const [count, setCount] = useState(0)
+const CommandCenter = lazy(() => import('./pages/CommandCenter'))
+const CharacterSheet = lazy(() => import('./pages/CharacterSheet'))
+const QuestLog = lazy(() => import('./pages/QuestLog'))
+const BossPage = lazy(() => import('./pages/BossPage'))
+const SkillTree = lazy(() => import('./pages/SkillTree'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
 
+const NAV_ITEMS = [
+  { to: '/', icon: '⌂', label: 'Command Center' },
+  { to: '/character', icon: '◈', label: 'Character' },
+  { to: '/quests', icon: '◉', label: 'Quests' },
+  { to: '/boss', icon: '⚔', label: 'Boss' },
+  { to: '/skills', icon: '✦', label: 'Skills' },
+]
+
+function Sidebar() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <nav
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 60,
+        height: '100vh',
+        backgroundColor: '#12161D',
+        borderRight: '1px solid #2A3140',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingTop: 12,
+        gap: 4,
+        zIndex: 100,
+      }}
+    >
+      {NAV_ITEMS.map(({ to, icon, label }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={to === '/'}
+          title={label}
+          style={({ isActive }) => ({
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 44,
+            height: 44,
+            borderRadius: 8,
+            fontSize: '1.25rem',
+            textDecoration: 'none',
+            color: isActive ? '#0066FF' : '#5C6678',
+            backgroundColor: isActive ? 'rgba(0, 102, 255, 0.1)' : 'transparent',
+            transition: 'color 0.15s, background-color 0.15s',
+          })}
         >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+          {icon}
+        </NavLink>
+      ))}
+    </nav>
   )
 }
 
-export default App
+function Loading() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        fontFamily: 'Michroma, sans-serif',
+        color: '#3D7FFF',
+        fontSize: '1.25rem',
+      }}
+    >
+      LOADING...
+    </div>
+  )
+}
+
+export default function App() {
+  const setUser = useGameStore((s) => s.setUser)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [setUser])
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="*"
+          element={
+            <AuthGuard>
+              <Sidebar />
+              <main style={{ marginLeft: 60 }}>
+                <Suspense fallback={<Loading />}>
+                  <Routes>
+                    <Route path="/" element={<CommandCenter />} />
+                    <Route path="/character" element={<CharacterSheet />} />
+                    <Route path="/quests" element={<QuestLog />} />
+                    <Route path="/boss" element={<BossPage />} />
+                    <Route path="/skills" element={<SkillTree />} />
+                  </Routes>
+                </Suspense>
+              </main>
+            </AuthGuard>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  )
+}
