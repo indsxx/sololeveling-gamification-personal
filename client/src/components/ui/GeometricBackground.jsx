@@ -82,10 +82,8 @@ export default function GeometricBackground() {
     }
     meshesRef.current = meshes
 
-    const clock = new THREE.Clock()
     function animate() {
       rafRef.current = requestAnimationFrame(animate)
-      const delta = clock.getDelta()
 
       meshes.forEach((mesh) => {
         mesh.rotation.x += mesh.userData.rotationSpeed.x
