@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { CornerFrame } from '../components/ui'
-import GeometricBackground from '../components/ui/GeometricBackground'
+import GlassPanel from '../components/ui/GlassPanel'
+import EnergyConduit from '../components/ui/EnergyConduit'
+import WorldManager from '../components/dungeon/WorldManager'
+import DungeonScene from '../components/dungeon/DungeonScene'
 
 const TABS = [
   { key: 'daily', label: 'DAILY' },
@@ -125,11 +128,11 @@ function DailyTab() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
     >
       {DAILY_QUESTS.map((quest) => (
         <motion.div key={quest.id} variants={itemVariants}>
-          <CornerFrame active padding="16px" hover style={{ width: '100%' }}>
+          <CornerFrame active hover padding="20px" glowing style={{ width: '100%' }}>
             <div
               style={{
                 display: 'flex',
@@ -141,8 +144,9 @@ function DailyTab() {
               <span
                 style={{
                   fontFamily: 'Michroma, sans-serif',
-                  fontSize: 13,
+                  fontSize: 15,
                   color: '#E7ECF5',
+                  letterSpacing: '0.05em',
                 }}
               >
                 {quest.title}
@@ -152,22 +156,23 @@ function DailyTab() {
                   fontFamily: 'JetBrains Mono, monospace',
                   fontSize: 12,
                   color: DIFFICULTY_COLORS[quest.difficulty] || '#5C6678',
-                  fontWeight: 700,
+                  fontWeight: 600,
                 }}
               >
                 [{quest.difficulty}]
               </span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
               {quest.objectives.map((obj, i) => (
                 <div
                   key={i}
                   style={{
-                    fontFamily: 'Michroma, sans-serif',
-                    fontSize: 11,
-                    color: obj.done ? '#5C6678' : '#E7ECF5',
+                    fontFamily: 'Public Sans, sans-serif',
+                    fontSize: 13,
+                    color: obj.done ? '#5C6678' : '#8B95A5',
                     textDecoration: obj.done ? 'line-through' : 'none',
+                    lineHeight: 1.6,
                   }}
                 >
                   {obj.done ? '■' : '□'} {obj.text}
@@ -181,6 +186,7 @@ function DailyTab() {
                   fontFamily: 'JetBrains Mono, monospace',
                   fontSize: 12,
                   color: '#D4A53D',
+                  fontWeight: 600,
                 }}
               >
                 +{quest.xp} XP
@@ -191,6 +197,7 @@ function DailyTab() {
                     fontFamily: 'JetBrains Mono, monospace',
                     fontSize: 12,
                     color: '#D4A53D',
+                    fontWeight: 600,
                   }}
                 >
                   +{quest.gold} Gold
@@ -210,24 +217,18 @@ function DungeonTab() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}
+      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}
     >
       {DUNGEONS.map((dungeon) => (
         <motion.div key={dungeon.id} variants={itemVariants}>
-          <CornerFrame
-            active
-            activeColor="#C23B3B"
-            glowing
-            hover
-            padding="20px"
-            style={{ width: '100%' }}
-          >
+          <CornerFrame active activeColor="#C23B3B" glowing hover padding="20px" style={{ width: '100%' }}>
             <div
               style={{
                 fontFamily: 'Michroma, sans-serif',
-                fontSize: 14,
+                fontSize: 15,
                 color: '#E7ECF5',
                 marginBottom: 8,
+                letterSpacing: '0.05em',
               }}
             >
               {dungeon.title}
@@ -239,7 +240,7 @@ function DungeonTab() {
                   fontFamily: 'JetBrains Mono, monospace',
                   fontSize: 12,
                   color: DIFFICULTY_COLORS[dungeon.difficulty] || '#5C6678',
-                  fontWeight: 700,
+                  fontWeight: 600,
                 }}
               >
                 [{dungeon.difficulty}]
@@ -247,9 +248,9 @@ function DungeonTab() {
               <span
                 style={{
                   fontFamily: 'JetBrains Mono, monospace',
-                  fontSize: 13,
+                  fontSize: 12,
                   color: '#D4A53D',
-                  fontWeight: 700,
+                  fontWeight: 600,
                 }}
               >
                 {dungeon.xp.toLocaleString()} XP
@@ -260,12 +261,12 @@ function DungeonTab() {
               <div
                 style={{
                   fontFamily: 'Michroma, sans-serif',
-                  fontSize: 9,
+                  fontSize: 10,
                   color: '#C23B3B',
-                  letterSpacing: '0.15em',
+                  letterSpacing: '0.2em',
                   border: '1px solid #C23B3B',
                   display: 'inline-block',
-                  padding: '4px 10px',
+                  padding: '4px 12px',
                   marginBottom: 12,
                 }}
               >
@@ -275,9 +276,9 @@ function DungeonTab() {
 
             <div
               style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 12,
-                color: '#5C6678',
+                fontFamily: 'Public Sans, sans-serif',
+                fontSize: 13,
+                color: '#8B95A5',
                 lineHeight: 1.6,
                 marginBottom: dungeon.bonus ? 8 : 0,
               }}
@@ -309,60 +310,38 @@ function StoryTab() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      style={{ position: 'relative', paddingLeft: 28 }}
+      style={{ position: 'relative', paddingLeft: 40 }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: 8,
-          left: 8,
-          bottom: 8,
-          width: 2,
-          backgroundColor: '#2A3140',
-        }}
-      />
+      <EnergyConduit chapters={CHAPTERS} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {CHAPTERS.map((ch) => {
           const locked = ch.status === 'locked'
           const inProgress = ch.status === 'in_progress'
 
           return (
-            <motion.div key={ch.id} variants={itemVariants} style={{ position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  left: -24,
-                  top: 20,
-                  width: 10,
-                  height: 10,
-                  borderRadius: '50%',
-                  backgroundColor: locked ? '#2A3140' : inProgress ? '#3D7FFF' : '#5C6678',
-                  border: locked ? 'none' : `2px solid ${inProgress ? '#3D7FFF' : '#5C6678'}`,
-                  zIndex: 1,
-                }}
-              />
-
+            <motion.div key={ch.id} variants={itemVariants}>
               <CornerFrame
                 active={inProgress}
                 hover={!locked}
-                padding="16px"
+                padding="20px"
+                glowing={inProgress}
                 style={{ width: '100%', opacity: locked ? 0.5 : 1 }}
               >
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
-                    marginBottom: 6,
+                    gap: 10,
+                    marginBottom: 8,
                   }}
                 >
                   <span
                     style={{
                       fontFamily: 'Michroma, sans-serif',
-                      fontSize: 9,
+                      fontSize: 10,
                       color: locked ? '#2A3140' : '#5C6678',
-                      letterSpacing: '0.15em',
+                      letterSpacing: '0.2em',
                     }}
                   >
                     CH.{ch.number}
@@ -370,8 +349,9 @@ function StoryTab() {
                   <span
                     style={{
                       fontFamily: 'Michroma, sans-serif',
-                      fontSize: 13,
+                      fontSize: 15,
                       color: locked ? '#2A3140' : '#E7ECF5',
+                      letterSpacing: '0.05em',
                     }}
                   >
                     {ch.title}
@@ -391,17 +371,17 @@ function StoryTab() {
                       <span
                         style={{
                           fontFamily: 'Michroma, sans-serif',
-                          fontSize: 9,
+                          fontSize: 10,
                           color: locked ? '#2A3140' : '#5C6678',
-                          letterSpacing: '0.1em',
+                          letterSpacing: '0.15em',
                         }}
                       >
                         BOSS:{' '}
                       </span>
                       <span
                         style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontSize: 12,
+                          fontFamily: 'Public Sans, sans-serif',
+                          fontSize: 13,
                           color: locked ? '#2A3140' : '#C23B3B',
                         }}
                       >
@@ -415,9 +395,9 @@ function StoryTab() {
                       <span
                         style={{
                           fontFamily: 'Michroma, sans-serif',
-                          fontSize: 9,
+                          fontSize: 10,
                           color: locked ? '#2A3140' : '#5C6678',
-                          letterSpacing: '0.1em',
+                          letterSpacing: '0.15em',
                         }}
                       >
                         REWARD:{' '}
@@ -425,8 +405,9 @@ function StoryTab() {
                       <span
                         style={{
                           fontFamily: 'JetBrains Mono, monospace',
-                          fontSize: 11,
+                          fontSize: 12,
                           color: locked ? '#2A3140' : '#D4A53D',
+                          fontWeight: 600,
                         }}
                       >
                         {ch.reward}
@@ -438,7 +419,7 @@ function StoryTab() {
                     style={{
                       fontFamily: 'Michroma, sans-serif',
                       fontSize: 10,
-                      letterSpacing: '0.15em',
+                      letterSpacing: '0.2em',
                       color: locked ? '#2A3140' : inProgress ? '#3D7FFF' : '#5C6678',
                       marginLeft: 'auto',
                     }}
@@ -459,70 +440,84 @@ export default function QuestLog() {
   const [activeTab, setActiveTab] = useState('daily')
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#0A0C10', padding: '0 24px 24px', position: 'relative' }}>
-      <GeometricBackground />
+    <WorldManager>
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: '#0A0C10',
+          padding: '0 24px 24px',
+          position: 'relative',
+        }}
+      >
+        <DungeonScene />
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div
-          style={{
-            fontFamily: 'Michroma, sans-serif',
-            fontSize: 11,
-            color: '#5C6678',
-            letterSpacing: '0.2em',
-            padding: '16px 0',
-          }}
-        >
-          QUEST LOG
-        </div>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div
+            style={{
+              fontFamily: 'Michroma, sans-serif',
+              fontSize: 14,
+              color: '#E7ECF5',
+              letterSpacing: '0.25em',
+              padding: '16px 0',
+              marginBottom: 24,
+              fontWeight: 700,
+            }}
+          >
+            QUEST LOG
+          </div>
 
-        {/* Tab Bar */}
-        <div
-          style={{
-            display: 'flex',
-            gap: 24,
-            borderBottom: '1px solid #2A3140',
-            marginBottom: 24,
-          }}
-        >
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+          <GlassPanel
+            hover={false}
+            style={{ marginBottom: 24, padding: '0 20px' }}
+          >
+            <div
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: 'Michroma, sans-serif',
-                fontSize: 11,
-                letterSpacing: '0.15em',
-                color: activeTab === tab.key ? '#3D7FFF' : '#5C6678',
-                paddingBottom: 12,
-                borderBottom:
-                  activeTab === tab.key ? '1px solid #3D7FFF' : '1px solid transparent',
-                marginBottom: -1,
-                transition: 'color 0.15s',
+                display: 'flex',
+                gap: 24,
+                borderBottom: '1px solid rgba(61, 127, 255, 0.15)',
               }}
             >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+              {TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontFamily: 'Michroma, sans-serif',
+                    fontSize: 12,
+                    letterSpacing: '0.2em',
+                    fontWeight: 600,
+                    color: activeTab === tab.key ? '#3D7FFF' : '#5C6678',
+                    paddingBottom: 16,
+                    borderBottom:
+                      activeTab === tab.key ? '2px solid #3D7FFF' : '2px solid transparent',
+                    marginBottom: -1,
+                    transition: 'color 0.15s',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </GlassPanel>
 
-        {/* Tab Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            variants={tabContentVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            {activeTab === 'daily' && <DailyTab />}
-            {activeTab === 'dungeon' && <DungeonTab />}
-            {activeTab === 'story' && <StoryTab />}
-          </motion.div>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              variants={tabContentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              {activeTab === 'daily' && <DailyTab />}
+              {activeTab === 'dungeon' && <DungeonTab />}
+              {activeTab === 'story' && <StoryTab />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </WorldManager>
   )
 }
