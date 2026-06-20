@@ -1,49 +1,4 @@
-import { useRef, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
-
-const PARTICLE_COUNT = 150
-
 export default function BlueBackground() {
-  const pointsRef = useRef()
-
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry()
-    const positions = new Float32Array(PARTICLE_COUNT * 3)
-    const velocities = new Float32Array(PARTICLE_COUNT * 3)
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 30
-      positions[i * 3 + 1] = Math.random() * 20 - 10
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20
-      velocities[i * 3] = (Math.random() - 0.5) * 0.001
-      velocities[i * 3 + 1] = Math.random() * 0.002 + 0.001
-      velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.001
-    }
-
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    geo.userData = { velocities }
-    return geo
-  }, [])
-
-  useFrame(() => {
-    if (!pointsRef.current) return
-    const positions = pointsRef.current.geometry.attributes.position.array
-    const velocities = pointsRef.current.geometry.userData.velocities
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      positions[i * 3] += velocities[i * 3]
-      positions[i * 3 + 1] += velocities[i * 3 + 1]
-      positions[i * 3 + 2] += velocities[i * 3 + 2]
-
-      if (positions[i * 3 + 1] > 10) {
-        positions[i * 3 + 1] = -10
-        positions[i * 3] = (Math.random() - 0.5) * 30
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 20
-      }
-    }
-    pointsRef.current.geometry.attributes.position.needsUpdate = true
-  })
 
   return (
     <div
